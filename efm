@@ -1,0 +1,72 @@
+#!/bin/bash
+
+# Task name input :
+printf "\n:: Name the task : \n> "
+read task_name
+
+# Best case task time input :
+printf "\n:: How much it takes in hours (best case) :\n> "
+read best_case_time
+
+# Usual case task time output :
+usual_case_time=$(bc <<< "$best_case_time / 8")
+usual_case_time_in_hours=0
+usual_case_timestring=""
+
+if [ $usual_case_time -lt 1 ];
+then
+	usual_case_timestring="$best_case_time hours"
+	usual_case_time_in_hours=$best_case_time;
+else
+	usual_case_timestring="$usual_case_time days"
+	usual_case_time_in_hours=$(bc <<< "$usual_case_time * 24");
+fi;
+
+printf "\n## So you can take $usual_case_timestring to work on that task in usual case !\n"
+
+# Obstacles percentage input :
+printf "\n:: How is your obstacles percentage :\n> "
+read obstacles_percent
+
+# Worst case task time output :
+time_to_add_from_percent=$(bc <<< "scale=2; ($usual_case_time_in_hours * $obstacles_percent) / 100")
+worst_case_time=$(bc <<< "$usual_case_time_in_hours + $time_to_add_from_percent")
+worst_case_time_in_hours=0
+worst_case_timestring=""
+
+if (( $(bc <<< "$worst_case_time < 24") ));
+then
+	worst_case_timestring="$worst_case_time hours"
+	worst_case_time_in_hours=$worst_case_time;
+else
+	worst_case_time_in_days=$(bc <<< "scale=2; $worst_case_time / 24")
+	worst_case_time_in_hours=$(bc <<< "$worst_case_time_in_days * 24")
+	worst_case_timestring="$worst_case_time_in_days days";
+fi;
+
+printf "\n## So it can take $worst_case_timestring in worst case !\n"
+
+# Input details :
+printf "\n## Details :\n"
+printf "\n** Task Name ** : $task_name \n"
+printf "\n** Best Case Time ** : $best_case_time hours \n"
+printf "\n** Usual Case Time ** : $usual_case_timestring \n"
+printf "\n** Worst Case Time ** : $worst_case_timestring"
+
+# Task time estimation output :
+estimated_time=$(bc <<< "scale=2; ($best_case_time + 4 * $usual_case_time_in_hours + $worst_case_time_in_hours ) / 6")
+estimated_timestring=""
+
+if (( $(bc <<< "$estimated_time < 24") ));
+then
+	estimated_timestring="$estimated_time hours";
+else
+	estimated_time_in_days=$(bc <<< "scale=2; $estimated_time / 24")
+	estimated_timestring="$estimated_time_in_days days";
+fi;
+
+printf "\n\n\n## In Result, this task will take : $estimated_timestring !\n"
+
+
+printf "\n"
+
