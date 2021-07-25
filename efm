@@ -47,7 +47,7 @@ fi;
 printf "\n## So it can take $worst_case_timestring in worst case !\n"
 
 # Input details :
-printf "\n## Details :\n"
+printf "\n\n## Details :\n"
 printf "\n** Task Name ** : $task_name \n"
 printf "\n** Best Case Time ** : $best_case_time hours \n"
 printf "\n** Usual Case Time ** : $usual_case_timestring \n"
@@ -65,7 +65,35 @@ else
 	estimated_timestring="$estimated_time_in_days days";
 fi;
 
-printf "\n\n\n## In Result, this task will take : $estimated_timestring !\n"
+printf "\n\n\n## In Result, this task will take a mean of : $estimated_timestring !\n"
+
+standard_deviation=$(bc <<< "scale=2; ($worst_case_time_in_hours - $best_case_time) / 6")
+
+mean_optimistic_time=$(bc <<< "$estimated_time - $standard_deviation")
+mean_optimistic_timestring=""
+
+if (( $(bc <<< "$mean_optimistic_time < 24") ));
+then
+	mean_optimistic_timestring="$mean_optimistic_time hours";
+else
+	mean_optimistic_time_in_days=$(bc <<< "scale=2; $mean_optimistic_time / 24")
+	mean_optimistic_timestring="$mean_optimistic_time_in_days days";
+fi;
+
+printf "\n## That means, it will take an optimistic mean of : $mean_optimistic_timestring !\n"
+
+mean_pessimistic_time=$(bc <<< "$estimated_time + $standard_deviation")
+mean_pessimistic_timestring=""
+
+if (( $(bc <<< "$mean_pessimistic_time < 24") ));
+then
+	mean_pessimistic_timestring="$mean_pessimistic_time hours";
+else
+	mean_pessimistic_time_in_days=$(bc <<< "scale=2; $mean_pessimistic_time / 24")
+	mean_pessimistic_timestring="$mean_pessimistic_time_in_days days";
+fi;
+
+printf "\n## That means, it will take an pessimistic mean of : $mean_pessimistic_timestring !\n"
 
 
 printf "\n"
